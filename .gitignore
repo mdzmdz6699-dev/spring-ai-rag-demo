@@ -1,0 +1,31 @@
+# 构建产物
+target/
+*.class
+*.jar
+
+# 日志
+*.log
+server_run.log
+fresh_run.log
+build.log
+run.log
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# 临时文件
+*.tmp
+*.bak
+
+# 系统
+.DS_Store
+Thumbs.db
+
+# 本地 Maven 副本（不入库，体积大且含二进制）
+.mvn-local/
+
+# 无关的旧网页 demo（非本项目产物）
+rag-web-demo.html
