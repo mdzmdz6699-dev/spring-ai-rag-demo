@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>代码 / 文档智能问答</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, "Microsoft YaHei", "PingFang SC", sans-serif; max-width: 780px; margin: 36px auto; padding: 0 16px; color: #222; background: #fff; }
+  h1 { font-size: 20px; margin-bottom: 4px; }
+  .hint { color: #888; font-size: 13px; margin: 0 0 16px; }
+  .box { display: flex; gap: 8px; margin: 12px 0 20px; }
+  input { flex: 1; padding: 11px 13px; font-size: 15px; border: 1px solid #cfd6e4; border-radius: 9px; outline: none; }
+  input:focus { border-color: #2f6fed; }
+  button { padding: 11px 20px; font-size: 15px; border: none; border-radius: 9px; background: #2f6fed; color: #fff; cursor: pointer; }
+  button:hover { background: #2459c4; }
+  button:disabled { background: #a9c0f5; cursor: default; }
+  .msg { border-radius: 11px; padding: 12px 15px; margin: 10px 0; white-space: pre-wrap; line-height: 1.65; font-size: 15px; }
+  .q { background: #eef3ff; border: 1px solid #dde6ff; }
+  .a { background: #fafbfc; border: 1px solid #eee; }
+  .label { font-weight: 600; color: #2f6fed; margin-right: 6px; }
+  #chat { min-height: 60px; }
+</style>
+</head>
+<body>
+  <h1>代码 / 文档智能检索问答</h1>
+  <p class="hint">基于 Spring AI + 本地向量检索 + DeepSeek 生成。在下方输入问题，回车或点「提问」即可。</p>
+  <div class="box">
+    <input id="q" placeholder="例如：如何提交一个工单？工单优先级有哪几档？" onkeydown="if(event.key==='Enter')ask()" autofocus />
+    <button id="btn" onclick="ask()">提问</button>
+  </div>
+  <div id="chat"></div>
+
+<script>
+async function ask() {
+  const inp = document.getElementById('q');
+  const btn = document.getElementById('btn');
+  const q = inp.value.trim();
+  if (!q) return;
+  inp.value = '';
+  const chat = document.getElementById('chat');
+  chat.innerHTML += '<div class="msg q"><span class="label">你</span>' + esc(q) + '</div>';
+  btn.disabled = true;
+  const foot = document.createElement('div');
+  foot.className = 'msg a';
+  foot.innerHTML = '<span class="label">答</span>正在检索并生成…';
+  chat.appendChild(foot);
+  chat.scrollTop = chat.scrollHeight;
+  try {
+    const res = await fetch('/ask?q=' + encodeURIComponent(q));
+    const text = await res.text();
+    foot.innerHTML = '<span class="label">答</span>' + esc(text);
+  } catch (e) {
+    foot.innerHTML = '<span class="label">答</span>请求失败：' + esc(String(e));
+  } finally {
+    btn.disabled = false;
+    chat.scrollTop = chat.scrollHeight;
+  }
+}
+function esc(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+</script>
+</body>
+</html>
