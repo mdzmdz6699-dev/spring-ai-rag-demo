@@ -1,0 +1,19 @@
+spring:
+  ai:
+    openai:
+      # DeepSeek 的 OpenAI 兼容地址
+      base-url: https://api.deepseek.com
+      # 从环境变量读取，避免密钥进文件 / 进 Git：
+      # 设 DEEPSEEK_API_KEY=sk-xxxx 后启动即可（key 不落盘，推荐）
+      api-key: ${DEEPSEEK_API_KEY}
+      chat:
+        options:
+          # 当前可用模型（deepseek-chat 已于 2026/07/24 弃用，勿写旧名）
+          model: deepseek-v4-flash
+          temperature: 0.2
+
+# 向量化使用本地轻量嵌入（config/LocalEmbeddingModel），不依赖任何外部 embedding 服务。
+# 原因：DeepSeek 不提供 embedding 接口（实测 /v1/embeddings 返回 404）。
+
+server:
+  port: 8080
